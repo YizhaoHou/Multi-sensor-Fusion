@@ -49,7 +49,7 @@ def draw_tags_box(tags, frame):
         cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
         cv2.putText(frame, str(tag.tag_id), (ptA[0], ptA[1] - 15),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-        return frame
+    return frame
 
 
 
