@@ -24,14 +24,21 @@ def get_image(pipeline):
         color_image = np.asanyarray(color_frame.get_data())
     return depth_image, color_image
 
-def detector():
-    return apriltag.Detector()
+def detector(families = None):
+    if not families:
+        return
+    options = apriltag.DetectorOptions(families=families)
+    return apriltag.Detector(options)
 
 
 def get_tags(detector, gray_img):
+    
     return detector.detect(gray_img)
 
 def draw_tags_box(tags, frame):
+
+    if len(tags) == 0:
+        return frame
     for tag in tags:
         (ptA, ptB, ptC, ptD) = tag.corners
         ptA = (int(ptA[0]), int(ptA[1]))
