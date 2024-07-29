@@ -25,11 +25,11 @@ class D435i:
         depth_value = depth_frame[py, px]
         if depth_value == 0:
             return []
-        if not threshold:
+        if threshold:
             if depth_value > threshold:
                 return []
         real_point = rs.rs2_deproject_pixel_to_point(self.depth_profile.as_video_stream_profile().get_intrinsics(),[px,py], depth_value)
-        real_point = real_point/1000
+        real_point = np.array(real_point)/1000
         return real_point
     
     def depth_to_point_cloud(self, depth_image, threshold = None):
@@ -37,7 +37,7 @@ class D435i:
         point_cloud  = []
         for i in range(height):
             for j in range(width):
-                point = self.get_3d_coordinates(depth_image, (j,i))
+                point = self.get_3d_coordinates(depth_image, (j,i), threshold=threshold)
                 if len(point) > 0:
                     point_cloud.append(self.get_3d_coordinates(depth_image, (j,i)))
 
