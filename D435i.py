@@ -18,14 +18,29 @@ class D435i:
         self.pipeline.stop()
 
     
-    def get_3d_coordinates(self, depth_frame, point):
-        if not depth_frame:
-            return None
+    def get_3d_coordinates(self, depth_frame, point, threshold = None):
         px, py = point
-        px = np.round(px)
-        py = np.round(py)
-        depth_value = depth_frame.get_distance(px,py)
+        px = int(np.round(px))
+        py = int(np.round(py))
+        depth_value = depth_frame[py, px]
         if depth_value == 0:
-            return None
+            return []
+        if not threshold:
+            if depth_value > threshold:
+                return []
         real_point = rs.rs2_deproject_pixel_to_point(self.depth_profile.as_video_stream_profile().get_intrinsics(),[px,py], depth_value)
+        real_point = real_point/1000
         return real_point
+    
+    def depth_to_point_cloud(self, depth_image, threshold = None):
+        height, width = depth_image.shape
+        point_cloud  = []
+        for i in range(height):
+            for j in range(width):
+                point = self.get_3d_coordinates(depth_image, (j,i))
+                if len(point) > 0:
+                    point_cloud.append(self.get_3d_coordinates(depth_image, (j,i)))
+
+        return np.array(point_cloud)
+
+
