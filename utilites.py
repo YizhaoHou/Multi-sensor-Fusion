@@ -58,6 +58,31 @@ def draw_tags_box(tags, frame):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     return frame
 
+def compute_transformation_matrix_AToB(A_points, B_points):
+    A_points = [sub + [1] for sub in A_points]
+    B_points = [sub + [1] for sub in B_points]
+    M = []
+    b = []
+    for i in range(4):
+        M.append([B_points[i][0], B_points[i][1], B_points[i][2], 1, 0, 0, 0, 0, 0, 0, 0, 0])
+        M.append([0, 0, 0, 0, B_points[i][0], B_points[i][1], B_points[i][2], 1, 0, 0, 0, 0])
+        M.append([0, 0, 0, 0, 0, 0, 0, 0, B_points[i][0], B_points[i][1], B_points[i][2], 1])
+        b.append(A_points[i][0])
+        b.append(A_points[i][1])
+        b.append(A_points[i][2])
+    M = np.array(M)
+    b = np.array(b)
+    h = np.linalg.solve(M, b)
+    H = np.array([
+        [h[0], h[1], h[2], h[3]],
+        [h[4], h[5], h[6], h[7]],
+        [h[8], h[9], h[10], h[11]],
+        [0, 0, 0, 1]
+    ])
+    return H            
+
+
+
 
 
 
