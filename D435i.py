@@ -62,6 +62,7 @@ class D435i:
         img_points = tag.corners
         success, rvec, tvec = cv2.solvePnP(obj_points, img_points, self.K, dist_coeffs)
         if success:
+            rvec, tvec = cv2.solvePnPRefineLM(obj_points, img_points, self.K, dist_coeffs, rvec, tvec)
             # 转换旋转向量为旋转矩阵
             R, _ = cv2.Rodrigues(rvec)
 
