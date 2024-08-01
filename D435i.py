@@ -1,4 +1,5 @@
 from utilites import *
+
 class D435i:
     def __init__(self, image_shape = (640,480), families = None) -> None:
         self.pipeline = start_pipline(image_shape= image_shape)
@@ -28,7 +29,6 @@ class D435i:
         
         depth_value = depth_frame[py, px]
         if depth_value == 0:
-            print(True)
             return []
         if threshold:
             if depth_value > threshold:
@@ -46,10 +46,9 @@ class D435i:
                 if len(point) > 0:
                     point_cloud.append(self.get_3d_coordinates(depth_image, (j,i)))
 
-        return np.array(point_cloud)
+        return change_points_to_pcd(np.array(point_cloud))
     
     def get_Transformation_to_tag(self, tag, tag_size = 60, dist_coeffs = np.zeros(5)):
-        print(tag.corners)
 
         #计算camera_H_world
         half_size = tag_size / 2
@@ -66,17 +65,17 @@ class D435i:
             # 转换旋转向量为旋转矩阵
             R, _ = cv2.Rodrigues(rvec)
 
-            # 打印外参矩阵
-            print("旋转矩阵 R:")
-            print(R)
-            print("平移向量 t:")
-            print(tvec)
+            # # 打印外参矩阵
+            # print("旋转矩阵 R:")
+            # print(R)
+            # print("平移向量 t:")
+            # print(tvec)
             
             # 组合外参矩阵 [R | t]
             H = np.hstack((R, tvec))
             H = np.concatenate((H, [[0, 0, 0, 1]]), axis = 0)
-            print("外参矩阵 [R | t]:")
-            print(H)
+            # print("外参矩阵 [R | t]:")
+            # print(H)
             return H
         else:
             print("solvePnP 求解失败")
