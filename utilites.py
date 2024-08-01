@@ -2,6 +2,8 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 import apriltag
+import keyboard
+import open3d as o3d
 
 def start_pipline(image_shape = (640,480)):
     pipeline = rs.pipeline()
@@ -59,8 +61,8 @@ def draw_tags_box(tags, frame):
     return frame
 
 def compute_transformation_matrix_AToB(A_points, B_points):
-    A_points = [sub + [1] for sub in A_points]
-    B_points = [sub + [1] for sub in B_points]
+    # A_points = [sub + [1] for sub in A_points]
+    # B_points = [sub + [1] for sub in B_points]
     M = []
     b = []
     for i in range(4):
@@ -72,6 +74,8 @@ def compute_transformation_matrix_AToB(A_points, B_points):
         b.append(A_points[i][2])
     M = np.array(M)
     b = np.array(b)
+    if np.linalg.matrix_rank(M) < 12:
+        raise np.linalg.LinAlgError("M 矩阵是奇异的或秩不足。")
     h = np.linalg.solve(M, b)
     H = np.array([
         [h[0], h[1], h[2], h[3]],
@@ -79,8 +83,19 @@ def compute_transformation_matrix_AToB(A_points, B_points):
         [h[8], h[9], h[10], h[11]],
         [0, 0, 0, 1]
     ])
-    return H            
+    return H  
 
+def wait_for_c_key():
+    print("Press 'c' to continue...")
+    while True:
+        if keyboard.is_pressed('c'):
+            print("'c' pressed. Continuing...")
+            break          
+
+def change_points_to_pcd(points):
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(points)
+    return pcd
 
 
 
