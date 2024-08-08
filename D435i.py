@@ -49,7 +49,7 @@ class D435i:
         return change_points_to_pcd(np.array(point_cloud))
     
     def get_Transformation_to_tag(self, tag, tag_size = 60):
-        dist_coeffs =self.depth_intrinsics.coeffs
+        dist_coeffs =np.array(self.depth_intrinsics.coeffs)
 
         #计算camera_H_world
         half_size = tag_size / 2

@@ -34,7 +34,7 @@ def detector(families = None):
 
 
 def get_tags(detector, gray_img):
-    
+   
     return detector.detect(gray_img)
 
 def draw_tags_box(tags, frame):
@@ -93,6 +93,7 @@ def wait_for_c_key():
             break          
 
 def change_points_to_pcd(points):
+    #将三维点转化为点云
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(points)
     return pcd
